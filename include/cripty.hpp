@@ -16,11 +16,19 @@ public:
     CriptyInfectedFilesFinder();
     ~CriptyInfectedFilesFinder();
     void searchInfectedFiles(const std::string& root_dir, const std::string& signature);
+    void scanFile(const std::string& filePath, const std::string& signature); 
+    bool scanChunk(std::streampos startPos, std::streampos endPos,
+                                        std::string signature, std::string file_path); 
+
+
 
 private:
-    std::unique_ptr<ThreadPool>m_thread_pool;
+    void scanSmallFile(const std::string& file_path, const std::string& signature);
+
+    std::unique_ptr<ThreadPool>m_thread_pool_multi_files;
+    std::unique_ptr<ThreadPool>m_thread_pool_big_file;
+    std::mutex m_cout_mutex;
 };
-void printIfInfected(const std::string& file_path, const std::string& signature);
 
 } // namespace cripty_project
 

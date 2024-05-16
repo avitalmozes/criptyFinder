@@ -20,15 +20,15 @@ int main(int argc, const char** argv)
     std::string root_dir = argv[1];
     if (!fs::is_directory(root_dir)) 
     {
-        std::cerr << "Error: Root directory does not exist or is not a directory." << std::endl;
+        std::cerr << "Error: first argument - root directory does not exist or is not a directory." << std::endl;
         return 1;
     }
 
     // Check if the signature file exists
     std::string signature_file_path = argv[2];
-    if (!fs::is_regular_file(signature_file_path)) 
+    if (!fs::exists(signature_file_path)) 
     {
-        std::cerr << "Error: Signature file does not exist or is not a regular file." << std::endl;
+        std::cerr << "Error: second argument - Signature file does not exist" << std::endl;
         return 1;
     }
     
