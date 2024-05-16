@@ -1,4 +1,5 @@
 #include "cripty.hpp"
+#include "thread_pool.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -6,7 +7,7 @@
 
 namespace fs = std::filesystem;
 
-namespace cripty
+namespace cripty_project
 {
 
 CriptyInfectedFilesFinder::CriptyInfectedFilesFinder()
@@ -15,7 +16,7 @@ CriptyInfectedFilesFinder::CriptyInfectedFilesFinder()
 CriptyInfectedFilesFinder::~CriptyInfectedFilesFinder()
 {}
 
-void cripty::CriptyInfectedFilesFinder::searchInfectedFiles(const std::string &root_dir, const std::string &signature)
+void CriptyInfectedFilesFinder::searchInfectedFiles(const std::string &root_dir, const std::string &signature)
 {
     for (const auto& entry : fs::recursive_directory_iterator(root_dir)) 
     {
@@ -43,4 +44,4 @@ bool CriptyInfectedFilesFinder::isInfected(const std::string &file_path, const s
     return content.find(signature) != std::string::npos;
 }
 
-} // namespace cripty
+} // namespace cripty_project

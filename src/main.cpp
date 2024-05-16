@@ -42,7 +42,7 @@ int main(int argc, const char** argv)
     signature.assign((std::istreambuf_iterator<char>(signature_file)), (std::istreambuf_iterator<char>()));
     signature_file.close();
 
-    cripty::CriptyInfectedFilesFinder cripty_obj;
+    cripty_project::CriptyInfectedFilesFinder cripty_obj;
     cripty_obj.searchInfectedFiles(root_dir, signature);
     
     return 0; 

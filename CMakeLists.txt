@@ -46,11 +46,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(SOURCES 
     src/main.cpp 
     src/cripty.cpp
+    src/thread_pool.cpp
 )
 
 # Header files
 set(HEADERS
     include/cripty.hpp
+    include/thread_pool.hpp
 )
 
 # Add executable
@@ -58,3 +60,6 @@ add_executable(find_sig ${SOURCES} ${HEADERS})
 
 # Set include directories
 target_include_directories(find_sig PRIVATE include)
+
+# Link against the pthread library
+target_link_libraries(find_sig PRIVATE pthread)
