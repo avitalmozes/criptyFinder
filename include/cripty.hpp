@@ -3,6 +3,7 @@
 
 #include <string>
 #include <memory>
+#include <mutex>
 
 namespace cripty_project
 {
@@ -17,11 +18,9 @@ public:
     void searchInfectedFiles(const std::string& root_dir, const std::string& signature);
 
 private:
-    bool isInfected(const std::string& file_path, const std::string& signature);
-
-    std::unique_ptr<ThreadPool>thread_pool;
-
+    std::unique_ptr<ThreadPool>m_thread_pool;
 };
+void printIfInfected(const std::string& file_path, const std::string& signature);
 
 } // namespace cripty_project
 

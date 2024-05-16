@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <filesystem>
+#include <mutex>
 
 #include "cripty.hpp"
 
@@ -43,6 +44,7 @@ int main(int argc, const char** argv)
     signature_file.close();
 
     cripty_project::CriptyInfectedFilesFinder cripty_obj;
+
     cripty_obj.searchInfectedFiles(root_dir, signature);
     
     return 0; 
