@@ -32,7 +32,6 @@ public:
     template <typename F, typename... Args>
     auto enqueue(F&& f, Args&&... args) -> std::future<decltype(f(args...))>
     {
-
         using result_type = std::invoke_result_t<F, Args...>; //Deduces the return type of an INVOKE expression at compile time.
 
         // Ensure that m_threads is not empty

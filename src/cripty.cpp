@@ -12,10 +12,10 @@ namespace fs = std::filesystem;
 namespace cripty_project
 {
 
-static constexpr size_t NUM_THREADS_MULTI_FILES = 10;
-static constexpr size_t NUM_THREADS_BIG_FILE = 20;
+static constexpr size_t NUM_THREADS_MULTI_FILES = 3;
+static constexpr size_t NUM_THREADS_BIG_FILE = 8;
 
-static constexpr uint64_t CHUNK_SPLIT = 1000000;
+static constexpr uint64_t CHUNK_SPLIT = 10000000;
 
 CriptyInfectedFilesFinder::CriptyInfectedFilesFinder()
 {
@@ -33,7 +33,7 @@ void CriptyInfectedFilesFinder::searchInfectedFiles(const std::string &root_dir,
     {
         std::string file_path = entry.path().string();
 
-        if(!fs::is_directory(file_path))
+        if(fs::is_regular_file(file_path))
         {
             std::function<void()> captured_lamda_scanFile_func = [this, file_path, signature]() 
             { 
@@ -50,12 +50,22 @@ void CriptyInfectedFilesFinder::scanSmallFile(const std::string &file_path, cons
     std::ifstream file(file_path, std::ios::binary);
     if (file.is_open()) 
     {        
-        std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-        if(content.find(signature) != std::string::npos)
+        try
         {
-            std::unique_lock<std::mutex> lock(m_cout_mutex);
-            std::cout << "Infected file found: " << file_path << std::endl;
+            std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+            if(content.find(signature) != std::string::npos)
+            {
+                std::unique_lock<std::mutex> lock(m_cout_mutex);
+                std::cout << file_path << " is infected!" << std::endl;
+            }
         }
+        catch(const std::ios_base::failure& e)        
+        {
+            std::cerr << e.what() << '\n';
+        }
+
+        file.close();
+
     }
     else
     {
@@ -69,23 +79,32 @@ bool CriptyInfectedFilesFinder::scanChunk(std::streampos start_pos, std::streamp
     std::ifstream file(file_path, std::ios::binary);
     if (file.is_open()) 
     {        
-        // Seek to the start position of the chunk
-        file.seekg(start_pos);
-
-        // Read the chunk content
-        std::vector<char> chunk(end_pos - start_pos);
-        file.read(chunk.data(), end_pos - start_pos);
-
-        // Convert the chunk content to string
-        std::string chunk_content(chunk.begin(), chunk.end());
-
-        // Search for the signature in the chunk
-        if(chunk_content.find(signature) != std::string::npos)
+        try
         {
-            std::unique_lock<std::mutex> lock(m_cout_mutex);
-            std::cout << "Infected file found: " << file_path << std::endl;
-            return true;
-        }    
+            // Seek to the start position of the chunk
+            file.seekg(start_pos);
+
+            // Read the chunk content
+            std::vector<char> chunk(end_pos - start_pos);
+            file.read(chunk.data(), end_pos - start_pos);
+
+            // Convert the chunk content to string
+            std::string chunk_content(chunk.begin(), chunk.end());
+
+            // Search for the signature in the chunk
+            if(chunk_content.find(signature) != std::string::npos)
+            {
+                std::unique_lock<std::mutex> lock(m_cout_mutex);
+                std::cout << file_path << " is infected!" << std::endl;
+                return true;
+            }
+        }
+        catch(const std::ios_base::failure& e)
+        {
+            std::cerr << e.what() << '\n';
+        } 
+
+        file.close();
     }
     else
     {
@@ -100,44 +119,57 @@ void CriptyInfectedFilesFinder::scanFile(const std::string &file_path, const std
     std::ifstream file(file_path, std::ios::binary);
     if (file.is_open()) 
     {
-        // Get the file size
-        file.seekg(0, std::ios::end);
-        size_t file_size = static_cast<size_t>(file.tellg());
-        file.seekg(0, std::ios::beg);
-
-        if(file_size > CHUNK_SPLIT) // it is a big file
+        try
         {
-            // Calculate the number of chunks
-            size_t num_chunks = static_cast<size_t>(std::ceil(static_cast<double>(file_size) / CHUNK_SPLIT));
+            // Get the file size
+            file.seekg(0, std::ios::end);
+            size_t file_size = static_cast<size_t>(file.tellg());
+            file.seekg(0, std::ios::beg);
 
-            // Create a thread pool and futures for each chunk
-            std::vector<std::future<bool>> futures;
-            for (size_t i = 0; i < num_chunks; ++i) 
+            if(file_size > CHUNK_SPLIT) // it is a big file
             {
-                std::streampos start_pos = i * CHUNK_SPLIT;
-                std::streampos end_pos = std::min((i + 1) * CHUNK_SPLIT + signature.size() - 1, file_size);
+                // Calculate the number of chunks
+                size_t num_chunks = static_cast<size_t>(std::ceil(static_cast<double>(file_size) / CHUNK_SPLIT));
 
-                std::function<bool()> captured_lamda_func = [this, start_pos, end_pos, signature, file_path]() -> bool 
+                // Create a thread pool and futures for each chunk
+                std::vector<std::future<bool>> futures;
+                for (size_t i = 0; i < num_chunks; ++i) 
                 {
-                    return this->scanChunk(start_pos, end_pos, signature, file_path);
-                };
+                    std::streampos start_pos = i * CHUNK_SPLIT;
+                    std::streampos end_pos = std::min((i + 1) * CHUNK_SPLIT + signature.size() - 1, file_size);
 
-                futures.push_back(m_thread_pool_big_file->enqueue(captured_lamda_func));
-            }
+                    futures.push_back(std::async(std::launch::async, [this, start_pos, end_pos, signature, file_path]() {
+                        return this->scanChunk(start_pos, end_pos, signature, file_path);
+                    }));
 
-            // Wait for all threads to finish and check the results
-            for (auto& future : futures) 
-            {
-                if (future.get()) 
+
+                    std::function<bool()> captured_lamda_func = [this, start_pos, end_pos, signature, file_path]() -> bool 
+                    {
+                        return this->scanChunk(start_pos, end_pos, signature, file_path);
+                    };
+
+                    futures.push_back(m_thread_pool_big_file->enqueue(captured_lamda_func));
+                }
+
+                // Wait for all threads to finish and check the results
+                for (auto& future : futures) 
                 {
-                    return; // Signature found in one of the chunks, no need to continue scanning
+                    future.wait();
+                    if (future.get()) 
+                    {
+                        return; // Signature found in one of the chunks, no need to continue scanning
+                    }
                 }
             }
+            else
+            {
+                scanSmallFile(file_path, signature);
+            }
         }
-        else
+        catch(const std::ios_base::failure& e)
         {
-            scanSmallFile(file_path, signature);
-        }
+            std::cerr << e.what() << '\n';
+        }   
 
         file.close();
     }
