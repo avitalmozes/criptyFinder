@@ -5,7 +5,7 @@
 #include <future>
 #include <queue>
 
-namespace cripty_project
+namespace crypty_project
 {
 
 /**
@@ -90,6 +90,6 @@ private:
     void StartThreadPool(unsigned int num_threads, const std::string& pool_name);
 };
 
-} // namespace cripty_project
+} // namespace crypty_project
 
 #endif //VISION_AOD_FST_THREAD_POOL_HPP

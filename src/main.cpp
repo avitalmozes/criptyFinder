@@ -4,7 +4,7 @@
 #include <filesystem>
 #include <mutex>
 
-#include "cripty_finder.hpp"
+#include "crypty_finder.hpp"
 
 namespace fs = std::filesystem;
 
@@ -22,8 +22,8 @@ int main(int argc, const char** argv)
 
         if(!signature.empty())
         {
-            cripty_project::CriptyInfectedFilesFinder cripty_finder;
-            cripty_finder.searchInfectedFiles(search_root_dir, signature);
+            crypty_project::CryptyInfectedFilesFinder crypty_finder;
+            crypty_finder.searchInfectedFiles(search_root_dir, signature);
             return 0; 
         }
     }

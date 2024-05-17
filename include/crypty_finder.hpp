@@ -1,26 +1,26 @@
-#ifndef CRIPTY_INFECTED_FILES_FINDER_HPP
-#define CRIPTY_INFECTED_FILES_FINDER_HPP
+#ifndef CRYPTY_INFECTED_FILES_FINDER_HPP
+#define CRYPTY_INFECTED_FILES_FINDER_HPP
 
 #include <string> // std::string
 #include <memory> // std::unique_ptr
 #include <mutex>  // std::mutex
 
-namespace cripty_project { // Namespace Declaration: cripty_project
+namespace crypty_project { // Namespace Declaration: crypty_project
 
 class ThreadPool; // Forward Declaration: ThreadPool class
 
-class CriptyInfectedFilesFinder
+class CryptyInfectedFilesFinder
 {
 public:
     /**
      * @brief Default constructor 
      */
-    CriptyInfectedFilesFinder();
+    CryptyInfectedFilesFinder();
 
     /**
      * @brief Destructor 
      */
-    ~CriptyInfectedFilesFinder();
+    ~CryptyInfectedFilesFinder();
 
     /**
      * @brief Searches for infected files in the specified root directory.
@@ -74,6 +74,6 @@ private:
     std::mutex m_cout_mutex;                               // Mutex for thread-safe cout operations
 };
 
-} // namespace cripty_project
+} // namespace crypty_project
 
-#endif //CRIPTY_INFECTED_FILES_FINDER_HPP
+#endif //CRYPTY_INFECTED_FILES_FINDER_HPP

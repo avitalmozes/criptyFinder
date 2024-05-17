@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(CriptyFinder)
+project(CryptyFinder)
 
 # Define options
 option(DEBUG "Compile with debug flags (-g)" OFF) # Default is OFF
@@ -48,13 +48,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Source files
 set(SOURCES 
     src/main.cpp 
-    src/cripty_finder.cpp
+    src/crypty_finder.cpp
     src/thread_pool.cpp
 )
 
 # Header files
 set(HEADERS
-    include/cripty_finder.hpp
+    include/crypty_finder.hpp
     include/thread_pool.hpp
 )
 

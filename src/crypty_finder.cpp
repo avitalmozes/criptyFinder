@@ -1,4 +1,4 @@
-#include "cripty_finder.hpp"
+#include "crypty_finder.hpp"
 #include "thread_pool.hpp"
 
 #include <iostream>
@@ -8,22 +8,22 @@
 
 namespace fs = std::filesystem;
 
-namespace cripty_project
+namespace crypty_project
 {
  // can be modified due to computer abilities
 static constexpr size_t NUM_THREADS_MULTI_FILES = 10;
 static constexpr uint64_t CHUNK_SPLIT = 10000000;
 
-CriptyInfectedFilesFinder::CriptyInfectedFilesFinder()
+CryptyInfectedFilesFinder::CryptyInfectedFilesFinder()
 {
     m_thread_pool_multi_files = std::make_unique<ThreadPool>(NUM_THREADS_MULTI_FILES);
 }
 
-CriptyInfectedFilesFinder::~CriptyInfectedFilesFinder()
+CryptyInfectedFilesFinder::~CryptyInfectedFilesFinder()
 {
 }
 
-void CriptyInfectedFilesFinder::searchInfectedFiles(const std::string &root_dir, const std::string &signature)
+void CryptyInfectedFilesFinder::searchInfectedFiles(const std::string &root_dir, const std::string &signature)
 {
     for (const auto& entry : fs::recursive_directory_iterator(root_dir)) 
     {
@@ -43,7 +43,7 @@ void CriptyInfectedFilesFinder::searchInfectedFiles(const std::string &root_dir,
     }
 }
 
-bool CriptyInfectedFilesFinder::smallFileInfected(std::ifstream &file, const std::string &signature)
+bool CryptyInfectedFilesFinder::smallFileInfected(std::ifstream &file, const std::string &signature)
 {
     if (file.is_open()) 
     {        
@@ -62,7 +62,7 @@ bool CriptyInfectedFilesFinder::smallFileInfected(std::ifstream &file, const std
     return false;
 }
 
-bool cripty_project::CriptyInfectedFilesFinder::bigFileInfected(std::ifstream &file, const std::string &signature, size_t file_size)
+bool CryptyInfectedFilesFinder::bigFileInfected(std::ifstream &file, const std::string &signature, size_t file_size)
 {
     if(file.is_open())
     {
@@ -90,7 +90,7 @@ bool cripty_project::CriptyInfectedFilesFinder::bigFileInfected(std::ifstream &f
     return false;
 }
 
-bool CriptyInfectedFilesFinder::scanChunk(std::streampos start_pos, std::streampos end_pos,
+bool CryptyInfectedFilesFinder::scanChunk(std::streampos start_pos, std::streampos end_pos,
                                         const std::string& signature, std::ifstream &file)
 {
     if (file.is_open()) 
@@ -117,7 +117,7 @@ bool CriptyInfectedFilesFinder::scanChunk(std::streampos start_pos, std::streamp
     return false;
 }
 
-void CriptyInfectedFilesFinder::scanFile(const std::string &file_path, const std::string &signature)
+void CryptyInfectedFilesFinder::scanFile(const std::string &file_path, const std::string &signature)
 {
     std::ifstream file(file_path, std::ios::binary);
     if (file.is_open()) 
@@ -160,4 +160,4 @@ void CriptyInfectedFilesFinder::scanFile(const std::string &file_path, const std
     }    
 }
 
-} // namespace cripty_project
+} // namespace crypty_project

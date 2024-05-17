@@ -1,6 +1,6 @@
 #include "thread_pool.hpp"
 
-namespace cripty_project
+namespace crypty_project
 {
 
 ThreadPool::ThreadPool(unsigned int numThreads, const std::string& pool_name)
@@ -56,4 +56,4 @@ void ThreadPool::StartThreadPool(unsigned int numThreads, const std::string& poo
     }
 }
 
-} // namespace cripty_project
+} // namespace crypty_project
