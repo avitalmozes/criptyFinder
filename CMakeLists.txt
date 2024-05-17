@@ -32,7 +32,6 @@ else()
 endif()
 
 # Apply flags
-# set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g")
 
 # Debug Flags
@@ -41,8 +40,6 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g -Wall -Wextra")
 # Release Flags
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -DNDEBUG")
 
-
-file(COPY ${CMAKE_SOURCE_DIR}/etc/cripty.sig DESTINATION ${CMAKE_BINARY_DIR})
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
