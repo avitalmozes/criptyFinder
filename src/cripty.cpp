@@ -10,9 +10,8 @@ namespace fs = std::filesystem;
 
 namespace cripty_project
 {
-
-static constexpr size_t NUM_THREADS_MULTI_FILES = 3;
-
+ // can be modified due to computer abilities
+static constexpr size_t NUM_THREADS_MULTI_FILES = 10;
 static constexpr uint64_t CHUNK_SPLIT = 10000000;
 
 CriptyInfectedFilesFinder::CriptyInfectedFilesFinder()
