@@ -29,12 +29,13 @@ void ThreadPool::StartThreadPool(unsigned int numThreads, const std::string& poo
 {
     for (unsigned int i = 0; i < numThreads; ++i)
     {
-        m_threads.emplace_back([this] {
-            for (;;)
+        m_threads.emplace_back([this] 
+        {
+            while (true)
             {
-
                 std::unique_lock<std::mutex> lock(m_queue_mutex);
-                m_condition.wait(lock, [this] { return m_stop || !m_tasks.empty(); });
+                m_condition.wait(lock, [this] 
+                    { return m_stop || !m_tasks.empty(); });
                 if (m_stop && m_tasks.empty())
                     return;
                 auto task = std::move(m_tasks.front());
