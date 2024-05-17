@@ -1,34 +1,77 @@
 #ifndef CRIPTY_INFECTED_FILES_FINDER_HPP
 #define CRIPTY_INFECTED_FILES_FINDER_HPP
 
-#include <string>
-#include <memory>
-#include <mutex>
+#include <string> // std::string
+#include <memory> // std::unique_ptr
+#include <mutex>  // std::mutex
 
-namespace cripty_project
-{
+namespace cripty_project { // Namespace Declaration: cripty_project
 
-class ThreadPool;
+class ThreadPool; // Forward Declaration: ThreadPool class
 
 class CriptyInfectedFilesFinder
 {
 public:
+    /**
+     * @brief Default constructor 
+     */
     CriptyInfectedFilesFinder();
+
+    /**
+     * @brief Destructor 
+     */
     ~CriptyInfectedFilesFinder();
+
+    /**
+     * @brief Searches for infected files in the specified root directory.
+     * 
+     * @param root_dir The root directory to search for infected files.
+     * @param signature The signature indicating infection.
+     */
     void searchInfectedFiles(const std::string& root_dir, const std::string& signature);
-    void scanFile(const std::string& filePath, const std::string& signature); 
-    bool scanChunk(std::streampos startPos, std::streampos endPos,
-                                        std::string signature, std::string file_path); 
 
+    /**
+     * @brief Scans a single file for infection.
+     * 
+     * @param file_path The path of the file to scan.
+     * @param signature The signature indicating infection.
+     */
+    void scanFile(const std::string& file_path, const std::string& signature); 
 
+    /**
+     * @brief Scans a chunk of a file for infection.
+     * 
+     * @param start_pos The starting position of the chunk.
+     * @param end_pos The ending position of the chunk.
+     * @param signature The signature indicating infection.
+     * @param file The file stream to scan.
+     * @return True if the chunk is infected, false otherwise.
+     */
+    bool scanChunk(std::streampos start_pos, std::streampos end_pos,
+                                        const std::string& signature, std::ifstream& file); 
 
 private:
-    void scanSmallFile(const std::string& file_path, const std::string& signature);
+    /**
+     * @brief Checks if a small file is infected.
+     * 
+     * @param file The file stream to check.
+     * @param signature The signature indicating infection.
+     * @return True if the file is infected, false otherwise.
+     */
+    bool smallFileInfected(std::ifstream& file, const std::string& signature);
 
-    std::unique_ptr<ThreadPool>m_thread_pool_multi_files;
-    std::unique_ptr<ThreadPool>m_thread_pool_big_file;
-    std::mutex m_cout_mutex;
-    std::mutex m_big_file_mutex;
+    /**
+     * @brief Checks if a big file is infected, splits the file to chunks of scaning
+     * 
+     * @param file The file stream to check.
+     * @param signature The signature indicating infection.
+     * @param file_size The size of the file.
+     * @return True if the file is infected, false otherwise.
+     */
+    bool bigFileInfected(std::ifstream& file, const std::string& signature, size_t file_size);
+
+    std::unique_ptr<ThreadPool> m_thread_pool_multi_files; // Unique pointer to thread pool for multi-file scanning
+    std::mutex m_cout_mutex;                               // Mutex for thread-safe cout operations
 };
 
 } // namespace cripty_project
