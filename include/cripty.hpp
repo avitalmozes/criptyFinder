@@ -28,6 +28,7 @@ private:
     std::unique_ptr<ThreadPool>m_thread_pool_multi_files;
     std::unique_ptr<ThreadPool>m_thread_pool_big_file;
     std::mutex m_cout_mutex;
+    std::mutex m_big_file_mutex;
 };
 
 } // namespace cripty_project

@@ -138,16 +138,12 @@ void CriptyInfectedFilesFinder::scanFile(const std::string &file_path, const std
                     std::streampos start_pos = i * CHUNK_SPLIT;
                     std::streampos end_pos = std::min((i + 1) * CHUNK_SPLIT + signature.size() - 1, file_size);
 
-                    futures.push_back(std::async(std::launch::async, [this, start_pos, end_pos, signature, file_path]() {
-                        return this->scanChunk(start_pos, end_pos, signature, file_path);
-                    }));
-
-
                     std::function<bool()> captured_lamda_func = [this, start_pos, end_pos, signature, file_path]() -> bool 
                     {
                         return this->scanChunk(start_pos, end_pos, signature, file_path);
                     };
 
+                    std::unique_lock<std::mutex> lock(m_big_file_mutex);
                     futures.push_back(m_thread_pool_big_file->enqueue(captured_lamda_func));
                 }
 
