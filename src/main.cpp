@@ -4,7 +4,7 @@
 #include <filesystem>
 #include <mutex>
 
-#include "cripty.hpp"
+#include "cripty_finder.hpp"
 
 namespace fs = std::filesystem;
 

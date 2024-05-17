@@ -48,13 +48,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Source files
 set(SOURCES 
     src/main.cpp 
-    src/cripty.cpp
+    src/cripty_finder.cpp
     src/thread_pool.cpp
 )
 
 # Header files
 set(HEADERS
-    include/cripty.hpp
+    include/cripty_finder.hpp
     include/thread_pool.hpp
 )
 

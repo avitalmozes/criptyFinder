@@ -1,4 +1,4 @@
-#include "cripty.hpp"
+#include "cripty_finder.hpp"
 #include "thread_pool.hpp"
 
 #include <iostream>
